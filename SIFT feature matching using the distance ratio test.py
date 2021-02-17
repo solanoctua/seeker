@@ -73,63 +73,64 @@ while ret:
     if len(good_matches) >= min_match_count:
             
             trainPoints = np.float32([keypoints_scene[j.trainIdx].pt for j in good_matches]).reshape(-1, 1, 2) # extracting location of good matches from real time vision
-            
-            representativematrix, maskk = cv2.findHomography(queryPoints, trainPoints, cv2.RANSAC, 5.0)  # this matrix represents location of target in real time vision
-            matchesMask = maskk.ravel().tolist()
-            height, width = img_object.shape  # height and width of original targeted image
-            points = np.float32([[0, 0],[0, height-1],[width-1, height-1],[width-1,0]]).reshape(-1, 1, 2)
-           
-            adaptiveTemplate = cv2.perspectiveTransform(points, representativematrix)  # points will adapt matrix
-           
-            homography = cv2.polylines(frame, [np.int32(adaptiveTemplate)], True, (0,0,255), 3, cv2.LINE_AA)
-            (x,y),radius = cv2.minEnclosingCircle(np.int32(adaptiveTemplate))  # finds center point and radius of minimum circle that encloses our location of good matches
-            #print(x,y,radius)
-            
-            center_detected_object = (int(x),int(y))
-            #print(type( center_detected_object))
-            #radius = int(radius)
-            img = cv2.circle(homography,center_detected_object,10,(0,0,255),-1,cv2.LINE_AA) # draws a circle representing center of the targeted object when the object is detected.
-            cv2.putText(homography,"("+str(int(x))+","+str(int(y))+")",(int(x),int(y)), cv2.FONT_HERSHEY_SIMPLEX, .5,(255,0,0),1,cv2.LINE_AA)
-            cv2.putText(homography,'OBJECT DETECTED',(120,15), cv2.FONT_HERSHEY_SIMPLEX, .6,(0,0,255),1,cv2.LINE_AA)
-            
-            # line 96-131 :draws a transparent rectangle to the zone, where our targeted object's center point lies.
-            alpha = 0.4
-            beta = (1.0 - alpha)
-            if(center_detected_object[0] <= int(frame_width/2 -target_lock_radius) and center_detected_object[1] <= int(frame_height/2 - target_lock_radius)):
-                #print("ZONE 1")
-                #To draw a rectangle, you need top-left corner and bottom-right corner of rectangle. 
-                cv2.rectangle(blank,(0,0),(int(frame_width/2 -target_lock_radius),int(frame_height/2 - target_lock_radius)),(0,255,0),cv2.FILLED)
-                
-            elif(center_detected_object[0] <= int(frame_width/2 -target_lock_radius) and center_detected_object[1] >= int(frame_height/2 - target_lock_radius) and center_detected_object[1] <= int(frame_height/2 + target_lock_radius)):
-                #print("ZONE 2")
-                cv2.rectangle(blank,(0,int(frame_height/2 - target_lock_radius)),(int(frame_width/2 -target_lock_radius),int(frame_height/2 + target_lock_radius)),(0,255,0),cv2.FILLED)
-            
-            elif(center_detected_object[0] <= int(frame_width/2 -target_lock_radius) and center_detected_object[1] >= int(frame_height/2 + target_lock_radius)):
-                #print("ZONE 3")
-                cv2.rectangle(blank,(0,int(frame_height/2 + target_lock_radius)),(int(frame_width/2 -target_lock_radius),int(frame_height)),(0,255,0),cv2.FILLED)
-            
-            elif(center_detected_object[0] >= int(frame_width/2 -target_lock_radius) and center_detected_object[0] <= int(frame_width/2 +target_lock_radius) and center_detected_object[1] <= int(frame_height/2 - target_lock_radius)  ):
-                #print("ZONE 4")
-                cv2.rectangle(blank,(int(frame_width/2 -target_lock_radius),0),(int(frame_width/2 +target_lock_radius),int(frame_height/2 - target_lock_radius)),(0,255,0),cv2.FILLED)
-            
-            elif(center_detected_object[0] >= int(frame_width/2 -target_lock_radius) and center_detected_object[0] <= int(frame_width/2 +target_lock_radius) and center_detected_object[1] >= int(frame_height/2 - target_lock_radius) and center_detected_object[1] <= int(frame_height/2 + target_lock_radius)):
-                #print("ZONE 5")
-                cv2.rectangle(blank,(int(frame_width/2 -target_lock_radius),int(frame_height/2 - target_lock_radius)),(int(frame_width/2 + target_lock_radius),int(frame_height/2 + target_lock_radius)),(0,255,0),cv2.FILLED)
-            elif(center_detected_object[0] >= int(frame_width/2 -target_lock_radius) and center_detected_object[0] <= int(frame_width/2 +target_lock_radius) and center_detected_object[1] >= int(frame_height/2 + target_lock_radius)  ):
-                #print("ZONE 6")
-                cv2.rectangle(blank,(int(frame_width/2 -target_lock_radius),int(frame_height/2 + target_lock_radius)),(int(frame_width/2 +target_lock_radius),int(frame_height)),(0,255,0),cv2.FILLED)
-            elif(center_detected_object[0] >= int(frame_width/2 +target_lock_radius) and center_detected_object[1] <= int(frame_height/2 - target_lock_radius)):
-                #print("ZONE 7")
-                cv2.rectangle(blank,(int(frame_width/2 +target_lock_radius),0),(int(frame_width),int(frame_height/2 - target_lock_radius)),(0,255,0),cv2.FILLED)
-            elif(center_detected_object[0] >= int(frame_width/2 +target_lock_radius) and center_detected_object[1] >= int(frame_height/2 - target_lock_radius) and center_detected_object[1] <= int(frame_height/2 + target_lock_radius)):
-                #print("ZONE 8")
-                cv2.rectangle(blank,(int(frame_width/2 +target_lock_radius),int(frame_height/2 - target_lock_radius)),(int(frame_width),int(frame_height/2 + target_lock_radius)),(0,255,0),cv2.FILLED)
-            elif(center_detected_object[0] >= int(frame_width/2 +target_lock_radius) and center_detected_object[1] >= int(frame_height/2 + target_lock_radius)):
-                #print("ZONE 9")
-                cv2.rectangle(blank,(int(frame_width/2 +target_lock_radius),int(frame_height/2 + target_lock_radius)),(int(frame_width),int(frame_height)),(0,255,0),cv2.FILLED)
-            
-            cv2.addWeighted(blank, alpha, frame, beta, 0.0,frame)
-            
+            try:
+                representativematrix, maskk = cv2.findHomography(queryPoints, trainPoints, cv2.RANSAC, 5.0)  # this matrix represents location of target in real time vision
+                matchesMask = maskk.ravel().tolist()
+                height, width = img_object.shape  # height and width of original targeted image
+                points = np.float32([[0, 0],[0, height-1],[width-1, height-1],[width-1,0]]).reshape(-1, 1, 2)
+
+                adaptiveTemplate = cv2.perspectiveTransform(points, representativematrix)  # points will adapt matrix
+
+                homography = cv2.polylines(frame, [np.int32(adaptiveTemplate)], True, (0,0,255), 3, cv2.LINE_AA)
+                (x,y),radius = cv2.minEnclosingCircle(np.int32(adaptiveTemplate))  # finds center point and radius of minimum circle that encloses our location of good matches
+                #print(x,y,radius)
+
+                center_detected_object = (int(x),int(y))
+                #print(type( center_detected_object))
+                #radius = int(radius)
+                img = cv2.circle(homography,center_detected_object,10,(0,0,255),-1,cv2.LINE_AA) # draws a circle representing center of the targeted object when the object is detected.
+                cv2.putText(homography,"("+str(int(x))+","+str(int(y))+")",(int(x),int(y)), cv2.FONT_HERSHEY_SIMPLEX, .5,(255,0,0),1,cv2.LINE_AA)
+                cv2.putText(homography,'OBJECT DETECTED',(120,15), cv2.FONT_HERSHEY_SIMPLEX, .6,(0,0,255),1,cv2.LINE_AA)
+
+                # line 96-131 :draws a transparent rectangle to the zone, where our targeted object's center point lies.
+                alpha = 0.4
+                beta = (1.0 - alpha)
+                if(center_detected_object[0] <= int(frame_width/2 -target_lock_radius) and center_detected_object[1] <= int(frame_height/2 - target_lock_radius)):
+                    #print("ZONE 1")
+                    #To draw a rectangle, you need top-left corner and bottom-right corner of rectangle. 
+                    cv2.rectangle(blank,(0,0),(int(frame_width/2 -target_lock_radius),int(frame_height/2 - target_lock_radius)),(0,255,0),cv2.FILLED)
+
+                elif(center_detected_object[0] <= int(frame_width/2 -target_lock_radius) and center_detected_object[1] >= int(frame_height/2 - target_lock_radius) and center_detected_object[1] <= int(frame_height/2 + target_lock_radius)):
+                    #print("ZONE 2")
+                    cv2.rectangle(blank,(0,int(frame_height/2 - target_lock_radius)),(int(frame_width/2 -target_lock_radius),int(frame_height/2 + target_lock_radius)),(0,255,0),cv2.FILLED)
+
+                elif(center_detected_object[0] <= int(frame_width/2 -target_lock_radius) and center_detected_object[1] >= int(frame_height/2 + target_lock_radius)):
+                    #print("ZONE 3")
+                    cv2.rectangle(blank,(0,int(frame_height/2 + target_lock_radius)),(int(frame_width/2 -target_lock_radius),int(frame_height)),(0,255,0),cv2.FILLED)
+
+                elif(center_detected_object[0] >= int(frame_width/2 -target_lock_radius) and center_detected_object[0] <= int(frame_width/2 +target_lock_radius) and center_detected_object[1] <= int(frame_height/2 - target_lock_radius)  ):
+                    #print("ZONE 4")
+                    cv2.rectangle(blank,(int(frame_width/2 -target_lock_radius),0),(int(frame_width/2 +target_lock_radius),int(frame_height/2 - target_lock_radius)),(0,255,0),cv2.FILLED)
+
+                elif(center_detected_object[0] >= int(frame_width/2 -target_lock_radius) and center_detected_object[0] <= int(frame_width/2 +target_lock_radius) and center_detected_object[1] >= int(frame_height/2 - target_lock_radius) and center_detected_object[1] <= int(frame_height/2 + target_lock_radius)):
+                    #print("ZONE 5")
+                    cv2.rectangle(blank,(int(frame_width/2 -target_lock_radius),int(frame_height/2 - target_lock_radius)),(int(frame_width/2 + target_lock_radius),int(frame_height/2 + target_lock_radius)),(0,255,0),cv2.FILLED)
+                elif(center_detected_object[0] >= int(frame_width/2 -target_lock_radius) and center_detected_object[0] <= int(frame_width/2 +target_lock_radius) and center_detected_object[1] >= int(frame_height/2 + target_lock_radius)  ):
+                    #print("ZONE 6")
+                    cv2.rectangle(blank,(int(frame_width/2 -target_lock_radius),int(frame_height/2 + target_lock_radius)),(int(frame_width/2 +target_lock_radius),int(frame_height)),(0,255,0),cv2.FILLED)
+                elif(center_detected_object[0] >= int(frame_width/2 +target_lock_radius) and center_detected_object[1] <= int(frame_height/2 - target_lock_radius)):
+                    #print("ZONE 7")
+                    cv2.rectangle(blank,(int(frame_width/2 +target_lock_radius),0),(int(frame_width),int(frame_height/2 - target_lock_radius)),(0,255,0),cv2.FILLED)
+                elif(center_detected_object[0] >= int(frame_width/2 +target_lock_radius) and center_detected_object[1] >= int(frame_height/2 - target_lock_radius) and center_detected_object[1] <= int(frame_height/2 + target_lock_radius)):
+                    #print("ZONE 8")
+                    cv2.rectangle(blank,(int(frame_width/2 +target_lock_radius),int(frame_height/2 - target_lock_radius)),(int(frame_width),int(frame_height/2 + target_lock_radius)),(0,255,0),cv2.FILLED)
+                elif(center_detected_object[0] >= int(frame_width/2 +target_lock_radius) and center_detected_object[1] >= int(frame_height/2 + target_lock_radius)):
+                    #print("ZONE 9")
+                    cv2.rectangle(blank,(int(frame_width/2 +target_lock_radius),int(frame_height/2 + target_lock_radius)),(int(frame_width),int(frame_height)),(0,255,0),cv2.FILLED)
+
+                cv2.addWeighted(blank, alpha, frame, beta, 0.0,frame)
+            except cv2.error as e:
+                print(e)
     else:
         print( "Not enough good matches are found - {}/{}".format(len(good_matches), min_match_count) )
         matchesMask = None
