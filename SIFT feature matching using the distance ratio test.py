@@ -78,7 +78,8 @@ while ret:
             matchesMask = maskk.ravel().tolist()
             height, width = img_object.shape  # height and width of original targeted image
             points = np.float32([[0, 0],[0, height-1],[width-1, height-1],[width-1,0]]).reshape(-1, 1, 2)
-            try:
+            
+            if (representativematrix is not None) : # if representativematrix is none then there is nothing to apply perspective Transform so following line will raise an exception((-215:Assertion failed) scn + 1 == m.cols in function 'cv::perspectiveTransform').
                 adaptiveTemplate = cv2.perspectiveTransform(points, representativematrix)  # points will adapt matrix
                 homography = cv2.polylines(frame, [np.int32(adaptiveTemplate)], True, (0,0,255), 3, cv2.LINE_AA)
                 (x,y),radius = cv2.minEnclosingCircle(np.int32(adaptiveTemplate))  # finds center point and radius of minimum circle that encloses our location of good matches
@@ -128,8 +129,7 @@ while ret:
                     cv2.rectangle(blank,(int(frame_width/2 +target_lock_radius),int(frame_height/2 + target_lock_radius)),(int(frame_width),int(frame_height)),(0,255,0),cv2.FILLED)
 
                 cv2.addWeighted(blank, alpha, frame, beta, 0.0,frame)
-            except cv2.error as e:
-                print(e)
+                
     else:
         print( "Not enough good matches are found - {}/{}".format(len(good_matches), min_match_count) )
         matchesMask = None
