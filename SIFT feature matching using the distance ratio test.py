@@ -73,14 +73,13 @@ while ret:
     if len(good_matches) >= min_match_count:
             
             trainPoints = np.float32([keypoints_scene[j.trainIdx].pt for j in good_matches]).reshape(-1, 1, 2) # extracting location of good matches from real time vision
+            
+            representativematrix, maskk = cv2.findHomography(queryPoints, trainPoints, cv2.RANSAC, 5.0)  # this matrix represents location of target in real time vision
+            matchesMask = maskk.ravel().tolist()
+            height, width = img_object.shape  # height and width of original targeted image
+            points = np.float32([[0, 0],[0, height-1],[width-1, height-1],[width-1,0]]).reshape(-1, 1, 2)
             try:
-                representativematrix, maskk = cv2.findHomography(queryPoints, trainPoints, cv2.RANSAC, 5.0)  # this matrix represents location of target in real time vision
-                matchesMask = maskk.ravel().tolist()
-                height, width = img_object.shape  # height and width of original targeted image
-                points = np.float32([[0, 0],[0, height-1],[width-1, height-1],[width-1,0]]).reshape(-1, 1, 2)
-
                 adaptiveTemplate = cv2.perspectiveTransform(points, representativematrix)  # points will adapt matrix
-
                 homography = cv2.polylines(frame, [np.int32(adaptiveTemplate)], True, (0,0,255), 3, cv2.LINE_AA)
                 (x,y),radius = cv2.minEnclosingCircle(np.int32(adaptiveTemplate))  # finds center point and radius of minimum circle that encloses our location of good matches
                 #print(x,y,radius)
