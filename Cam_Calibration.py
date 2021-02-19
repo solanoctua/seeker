@@ -6,31 +6,39 @@ import os
 # !!! PUT THIS SCRIPT INTO A FILE WHERE YOUR CALIBRATION IMAGES(.JPG otherwise correct line 23) ARE, THEN RUN !!!
 
 # https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html#calibration
-# termination criteria
-edge_of_square = 24 # 24 milimeter
-criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, edge_of_square, 0.001)
-# prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(9,6,0)
-objp = np.zeros((6*9,3), np.float32)
-objp[:,:2] = np.mgrid[0:9,0:6].T.reshape(-1,2)
-# Arrays to store object points and image points from all the images.
+# http://www.bim-times.com/opencv/3.3.0/d9/d0c/group__calib3d.html#ga3207604e4b1a1758aa66acb6ed5aa65d
+edge_of_square = 24 # 24 milimeters = 0.024 meters
+
+# termination criteria:
+# cv.TERM_CRITERIA_EPS - stop the algorithm iteration if specified accuracy, epsilon, is reached.
+# cv.TERM_CRITERIA_MAX_ITER - stop the algorithm after the specified number of iterations, max_iter.
+# cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER - stop the iteration when any of the above condition is met.
+# maxCount	The maximum number of iterations or elements to compute.
+# epsilon - Required accuracy
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, maxCount = 30,epsilon= 0.001)   
+
+# prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(9,6,0)                     
+objp = np.zeros((6*9,3), np.float32) # create 6x9 matrix ,which each entry will(currently all 0) contain (x,y,z) coordinates of corners of chessboard in real(3D) world                                                  
+objp[:,:2] = np.mgrid[0:9,0:6].T.reshape(-1,2)      
+
+objp = objp * edge_of_square # to find location of corners in real world we multiply the matrix with edge_of_square
+# Arrays to store object points and image points from all the images.                    
 objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 
 # Get the current working directory 
 cwd = os.getcwd() 
-#path_of_images = "C:/Users/..../Desktop/"
 path_of_images = cwd
+#path_of_images = "C:/Users/..../Desktop/"    # one may input manually
 filename = path_of_images +"/*.jpg"
 
-cap = cv2.VideoCapture(0)
-
-print("{} image found.".format(len(os.listdir(path_of_images))))
+#print("{} image found.".format(len(os.listdir(path_of_images))))
+# We will for loop calibration images
 images = glob.glob(filename)
 for fname in images:
-    distorted_img = cv2.imread(fname)
-    gray = cv2.cvtColor(distorted_img, cv2.COLOR_BGR2GRAY)
-    # Find the chess board corners
-    ret, corners = cv2.findChessboardCorners(gray, (9,6), None)
+    distorted_img = cv2.imread(fname) # read images one by one
+    gray = cv2.cvtColor(distorted_img, cv2.COLOR_BGR2GRAY) # apply BGR to Gray conversion
+    ret, corners = cv2.findChessboardCorners(gray, (9,6), None)# Find the chess board corners, if desired number of corners are found in the image then ret = true 
     # If found, add object points, image points (after refining them)
     if ret == True:
         objpoints.append(objp)
@@ -42,7 +50,7 @@ for fname in images:
         #cv2.waitKey(500)
         
 cv2.destroyAllWindows()
-
+# Camera matrix(3x3 matrix),Distortion coefficients(1x5 matrix),Rotation Vectors,Translation Vectors
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
 
 # Save mtx and dist values into a txt file
@@ -81,10 +89,6 @@ def draw(img, corners, imgpts):
     img = cv2.line(img, corner, tuple(imgpts[1].ravel()), (0,255,0), 5)
     img = cv2.line(img, corner, tuple(imgpts[2].ravel()), (0,0,255), 5)
     return img
-
-criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, edge_of_square, 0.001)
-objp = np.zeros((6*9,3), np.float32)
-objp[:,:2] = np.mgrid[0:9,0:6].T.reshape(-1,2)
 
 axis = np.float32([[3,0,0], [0,3,0], [0,0,-3]]).reshape(-1,3)
 count = 0
