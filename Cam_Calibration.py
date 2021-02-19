@@ -36,7 +36,7 @@ images = glob.glob(filename)
 for fname in images:
     distorted_img = cv2.imread(fname) # read images one by one
     gray = cv2.cvtColor(distorted_img, cv2.COLOR_BGR2GRAY) # apply BGR to Gray conversion
-    ret, corners = cv2.findChessboardCorners(gray, (9,6), None)# Find the chess board corners, if desired number of corners are found in the image then ret = true 
+    ret, corners = cv2.findChessboardCorners(gray, (9,6), None)# Finds the positions of internal corners of the chessboard, if desired number of corners are found in the image then ret = true 
     # If found, add object points, image points (after refining them)
     if ret == True:
         objpoints.append(objp)
@@ -50,7 +50,7 @@ for fname in images:
 cv2.destroyAllWindows()
 # Camera matrix(3x3 matrix),Distortion coefficients(1x5 matrix),Rotation Vectors,Translation Vectors
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None) #Finds the camera intrinsic and extrinsic parameters from several views of a calibration pattern.
-
+                                                                         #shape is a tuple of (row (height), column (width), color (3)) we only need row and column
 # Save mtx and dist values into a txt file
 with open(path_of_images+"/calibration_data.txt", "a") as file:
     np.savetxt(file, mtx, delimiter=',', header="mtx: ",)
