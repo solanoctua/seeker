@@ -49,7 +49,7 @@ for fname in images:
         
 cv2.destroyAllWindows()
 # Camera matrix(3x3 matrix),Distortion coefficients(1x5 matrix),Rotation Vectors,Translation Vectors
-ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
+ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None) #Finds the camera intrinsic and extrinsic parameters from several views of a calibration pattern.
 
 # Save mtx and dist values into a txt file
 with open(path_of_images+"/calibration_data.txt", "a") as file:
