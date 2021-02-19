@@ -40,7 +40,7 @@ for fname in images:
     # If found, add object points, image points (after refining them)
     if ret == True:
         objpoints.append(objp)
-        corners2 = cv2.cornerSubPix(gray,corners, (11,11), (-1,-1), criteria)
+        corners2 = cv2.cornerSubPix(gray,corners, (11,11), (-1,-1), criteria) #The cornerSubPix function iterates to find the sub-pixel accurate location of corners.
         imgpoints.append(corners)
         # Draw and display the corners
         cv2.drawChessboardCorners(distorted_img, (9,6), corners2, ret)
