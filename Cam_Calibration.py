@@ -3,7 +3,7 @@ import cv2
 import glob
 import os
 
-# !!! PUT THIS SCRIPT INTO A FILE WHERE YOUR CALIBRATION IMAGES(.JPG otherwise correct line 23) ARE, THEN RUN !!!
+# !!! PUT THIS SCRIPT INTO A FILE WHERE YOUR CALIBRATION IMAGES(.JPG otherwise correct line 31-32) ARE, THEN RUN !!!
 
 # https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html#calibration
 # http://www.bim-times.com/opencv/3.3.0/d9/d0c/group__calib3d.html#ga3207604e4b1a1758aa66acb6ed5aa65d
