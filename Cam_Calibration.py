@@ -60,7 +60,7 @@ file.release()
 # Save mtx and dist values into a txt file
 with open(path_of_images+"/calibration_data.txt", "a") as file:
     np.savetxt(file, mtx, delimiter=',', header="mtx: ",)
-    np.savetxt(path_of_images+"/calibration_data.txt", dist, delimiter=',', header="dist: ",)
+    np.savetxt(file, dist, delimiter=',', header="dist: ",)
     file.close()
 print("camera matrix and distortion coefficients are saved")
 
