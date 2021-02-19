@@ -5,7 +5,7 @@ import os
 
 # https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html#calibration
 # http://www.bim-times.com/opencv/3.3.0/d9/d0c/group__calib3d.html#ga3207604e4b1a1758aa66acb6ed5aa65d
-edge_of_square = 24 # 24 milimeters = 0.024 meters
+edge_of_square = 0.024 # in meters
 
 # termination criteria:
 # cv.TERM_CRITERIA_EPS - stop the algorithm iteration if specified accuracy, epsilon, is reached.
@@ -44,8 +44,8 @@ for fname in images:
         imgpoints.append(corners)
         # Draw and display the corners
         cv2.drawChessboardCorners(distorted_img, (9,6), corners2, ret)
-        #cv2.imshow('distorted_img', distorted_img)
-        #cv2.waitKey(500)
+        cv2.imshow('distorted_img', distorted_img)
+        cv2.waitKey(500)
         
 cv2.destroyAllWindows()
 # Camera matrix(3x3 matrix),Distortion coefficients(1x5 matrix),Rotation Vectors,Translation Vectors
