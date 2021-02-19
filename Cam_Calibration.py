@@ -13,7 +13,7 @@ edge_of_square = 24 # 24 milimeters = 0.024 meters
 # cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER - stop the iteration when any of the above condition is met.
 # maxCount	The maximum number of iterations or elements to compute.
 # epsilon - Required accuracy
-criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, maxCount = 30,epsilon= 0.001)   
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)   
 
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(9,6,0)                     
 objp = np.zeros((6*9,3), np.float32) # create 6x9 matrix ,which each entry will(currently all 0) contain (x,y,z) coordinates of corners of chessboard in real(3D) world                                                  
@@ -51,6 +51,12 @@ cv2.destroyAllWindows()
 # Camera matrix(3x3 matrix),Distortion coefficients(1x5 matrix),Rotation Vectors,Translation Vectors
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None) #Finds the camera intrinsic and extrinsic parameters from several views of a calibration pattern.
                                                                          #shape is a tuple of (row (height), column (width), color (3)) we only need row and column
+"""
+file = cv2.FileStorage(path_of_images+"/calibration_data.txt", cv2.FILE_STORAGE_WRITE)
+file.write("mtx", mtx)
+file.write("dist", dist)
+file.release()
+"""
 # Save mtx and dist values into a txt file
 with open(path_of_images+"/calibration_data.txt", "a") as file:
     np.savetxt(file, mtx, delimiter=',', header="mtx: ",)
@@ -86,13 +92,15 @@ def draw(img, corners, imgpts):
     img = cv2.line(img, corner, tuple(imgpts[1].ravel()), (0,255,0), 5)
     img = cv2.line(img, corner, tuple(imgpts[2].ravel()), (0,0,255), 5)
     return img
+  
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+objp = np.zeros((6*9,3), np.float32)
+objp[:,:2] = np.mgrid[0:9,0:6].T.reshape(-1,2)
 
 axis = np.float32([[3,0,0], [0,3,0], [0,0,-3]]).reshape(-1,3)
 count = 0
 for fname in images:
     img = cv2.imread(fname)
-    # Since we already find all values below we dont need to calculate again
-    """
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     ret, corners = cv2.findChessboardCorners(gray, (9,6),None)
 
@@ -101,10 +109,9 @@ for fname in images:
 
         # Find the rotation and translation vectors.
         _ ,rvecs, tvecs, inliers = cv2.solvePnPRansac(objp, corners2, mtx, dist)
-    """
+    
         # project 3D points to image plane
         imgpts, jac = cv2.projectPoints(axis, rvecs, tvecs, mtx, dist) #Projects 3D points(axis in this case) to an image plane.
-    
         img_wpose = draw(img,corners2,imgpts)
         cv2.imshow('img',img_wpose)
         cv2.imwrite(path_of_images +"/wpose_"+str(count)+".jpg", img_wpose)
@@ -112,5 +119,3 @@ for fname in images:
         count+=1
 print("images with poses are saved")    
 cv2.destroyAllWindows()
-
-
