@@ -70,15 +70,14 @@ print ("Re-projection error: ", total_error/len(objpoints))
 # undistort one of distorted images
 distorted_img = cv2.imread(path_of_images+"/0.jpg")
 h,  w = distorted_img.shape[:2]
-new_camera_mtx, roi=cv2.getOptimalNewCameraMatrix(mtx,dist,(w,h),1,(w,h))
+new_camera_mtx, roi=cv2.getOptimalNewCameraMatrix(mtx,dist,(w,h),1,(w,h))  # Returns the new camera intrinsic matrix 
 
-dst = cv2.undistort(distorted_img, mtx, dist, None, new_camera_mtx)
+dst = cv2.undistort(distorted_img, mtx, dist, None, new_camera_mtx) # The undistort function transforms an image to compensate radial and tangential lens distortion
 
 # crop the image
 x,y,w,h = roi
 dst = dst[y:y+h, x:x+w]
 cv2.imwrite(path_of_images +"/calibration_result_0.jpg",dst)
-
 
 #***********************************************Pose Estimation******************************************************
 def draw(img, corners, imgpts):
@@ -92,6 +91,8 @@ axis = np.float32([[3,0,0], [0,3,0], [0,0,-3]]).reshape(-1,3)
 count = 0
 for fname in images:
     img = cv2.imread(fname)
+    # Since we already find all values below we dont need to calculate again
+    """
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     ret, corners = cv2.findChessboardCorners(gray, (9,6),None)
 
@@ -100,10 +101,10 @@ for fname in images:
 
         # Find the rotation and translation vectors.
         _ ,rvecs, tvecs, inliers = cv2.solvePnPRansac(objp, corners2, mtx, dist)
-
+    """
         # project 3D points to image plane
-        imgpts, jac = cv2.projectPoints(axis, rvecs, tvecs, mtx, dist)
-
+        imgpts, jac = cv2.projectPoints(axis, rvecs, tvecs, mtx, dist) #Projects 3D points(axis in this case) to an image plane.
+    
         img_wpose = draw(img,corners2,imgpts)
         cv2.imshow('img',img_wpose)
         cv2.imwrite(path_of_images +"/wpose_"+str(count)+".jpg", img_wpose)
