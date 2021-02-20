@@ -6,7 +6,7 @@ import os
 # https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html#calibration
 # http://www.bim-times.com/opencv/3.3.0/d9/d0c/group__calib3d.html#ga3207604e4b1a1758aa66acb6ed5aa65d
 # https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_pose/py_pose.html
-edge_of_square = 24 # in milimeters
+edge_of_square = 0.024 # in meters
 """
 https://answers.opencv.org/question/39443/python-camera-calibration-square-size-seems-to-have-no-effect/
 Actually, camera matrix and distortion coefficients don't depend on square size.
