@@ -4,7 +4,6 @@ import cv2
 arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_ARUCO_ORIGINAL)
 # detector parameters: https://docs.opencv.org/3.4/d1/dcd/structcv_1_1aruco_1_1DetectorParameters.html
 arucoParams = cv2.aruco.DetectorParameters_create()
-#markerEdgeSize = 0.025 # meters
 markerSize = 0.125 #meters
 # camera matrix and distortion coefficients results from camera calibration
 mtx =np.array( [ [8.6297319278294219e+02,          0.          , 3.2410970150269952e+02], 
@@ -59,17 +58,11 @@ while ret:
             bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
             bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
             topLeft = (int(topLeft[0]), int(topLeft[1]))
-            """
-            # draw the bounding box of the detected ArUCo marker.
-            cv2.line(frame, topLeft, topRight, (0, 255, 0), 2)
-            cv2.line(frame, topRight, bottomRight, (0, 255, 0), 2)
-            cv2.line(frame, bottomRight, bottomLeft, (0, 255, 0), 2)
-            cv2.line(frame, bottomLeft, topLeft, (0, 255, 0), 2)
-            """
-            # Compute and draw the center (x, y)-coordinates of the detected ArUco marker.
+            
+            # Compute and draw the center (x, y) coordinates of the detected ArUco marker.
             cX = int((topLeft[0] + bottomRight[0]) / 2.0)
             cY = int((topLeft[1] + bottomRight[1]) / 2.0)
-            cv2.circle(frame, (cX, cY), 5, (0, 0, 255), -1)
+            cv2.circle(frame, (cX, cY), 15, (0, 0, 255), 1)
 
             # draw the ArUco marker ID on the frame
             cv2.putText(frame, str(markerID),(topLeft[0] +15 , topLeft[1] - 15),cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 2)
