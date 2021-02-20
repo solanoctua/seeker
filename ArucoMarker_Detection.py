@@ -17,6 +17,8 @@ cap = cv2.VideoCapture(0)
 #cap.set(3,432)
 #height
 #cap.set(4,432)
+prev_frame_time = 0
+new_frame_time = 0
 if cap.isOpened():
     ret , frame = cap.read()
     #cap.read() returns a bool (True/False). If frame is read correctly, it will be True. So you can check end of the video by checking this return value.
@@ -26,6 +28,12 @@ else:
 
 while ret:
     ret , frame = cap.read()
+    # Calculating the fps
+    new_frame_time = time.time() 
+    fps = 1/(new_frame_time-prev_frame_time) 
+    prev_frame_time = new_frame_time 
+    cv2.putText(frame,"fps: "+str(int(fps)),(15,15), cv2.FONT_HERSHEY_SIMPLEX, .6,(0,0,255),1,cv2.LINE_AA) # displays fps
+    
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # apply grayscale
     blur = cv2.GaussianBlur(gray,(5,5),0) # blured (filtered) image with a 5x5 gaussian kernel to remove the noise
     # Draw detected markers in image.
