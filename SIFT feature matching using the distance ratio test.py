@@ -21,7 +21,8 @@ cap = cv2.VideoCapture(0)
 #one may rescale the frame sizes
 #cap.set(3,432) #width
 #cap.set(4,432)#height
-
+prev_frame_time = 0
+new_frame_time = 0
 if cap.isOpened():
         ret , frame = cap.read() #cap.read()  returns a bool (True/False). If frame is read correctly, it(ret) will be True.
 else:
@@ -34,11 +35,12 @@ while ret:
     frame_width  = cap.get(cv2.CAP_PROP_FRAME_WIDTH)   # float `width`
     frame_height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
     #print(frame_width,frame_height)
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    #frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-
-    cv2.putText(frame,"fps: "+str(fps),(15,15), cv2.FONT_HERSHEY_SIMPLEX, .6,(0,0,255),1,cv2.LINE_AA) # displays fps
-    #cv2.putText(frame,"frame count: "+str(frame_count),(15,30), cv2.FONT_HERSHEY_SIMPLEX, .6,(0,0,255),1,cv2.LINE_AA) # displays frame count
+    # Calculating the fps 
+    new_frame_time = time.time() 
+    fps = 1/(new_frame_time-prev_frame_time) 
+    prev_frame_time = new_frame_time 
+    cv2.putText(frame,"fps: "+str(int(fps)),(15,15), cv2.FONT_HERSHEY_SIMPLEX, .6,(0,0,255),1,cv2.LINE_AA) # displays fps
+    
     medianBlur = cv2.medianBlur(frame,5) # applies medianBlur to frame to cancel some noises
     grayFrame = cv2.cvtColor(medianBlur,cv2.COLOR_BGR2GRAY)   #applies grayscale to frame in order to reduce computational cost
     keypoints_scene, descriptors_scene = detector.detectAndCompute(grayFrame, None)
