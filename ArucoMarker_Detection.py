@@ -36,14 +36,15 @@ while ret:
     
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # apply grayscale
     blur = cv2.GaussianBlur(gray,(5,5),0) # blured (filtered) image with a 5x5 gaussian kernel to remove the noise
-    # Draw detected markers in image.
-    # image =   cv.aruco.drawDetectedMarkers(   image, corners[, ids[, borderColor]]    )
+    
     # cv2.aruco.detectMarkers(  image, dictionary[, corners[, ids[, parameters[, rejectedImgPoints[, cameraMatrix[, distCoeff]]]]]] )
     (corners, ids, rejected) = cv2.aruco.detectMarkers(blur, arucoDict, parameters= arucoParams,cameraMatrix= mtx, distCoeff= dist)
 
     if(len(corners) > 0): # Returns True if at least one ArUco marker is detected.
         ids = ids.flatten() # Return a copy of the ids array collapsed into one dimension.
         try:
+            # Draw detected markers in image.
+            # image =   cv.aruco.drawDetectedMarkers(   image, corners[, ids[, borderColor]]    )
             cv2.aruco.drawDetectedMarkers(frame, corners, ids, borderColor = (0, 0, 255) )  # Draw A square around the markers
         except cv2.error as e:
             print(e)
