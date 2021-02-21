@@ -4,6 +4,7 @@ import cv2
 arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_ARUCO_ORIGINAL)
 # detector parameters: https://docs.opencv.org/3.4/d1/dcd/structcv_1_1aruco_1_1DetectorParameters.html
 arucoParams = cv2.aruco.DetectorParameters_create()
+arucoParams.errorCorrectionRate = 2 # default 0.6
 markerSize = 0.125 #meters
 # camera matrix and distortion coefficients results from camera calibration
 mtx =np.array( [ [8.6297319278294219e+02,          0.          , 3.2410970150269952e+02], 
