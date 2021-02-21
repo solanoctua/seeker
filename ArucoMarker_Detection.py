@@ -32,7 +32,7 @@ while ret:
     new_frame_time = time.time() 
     fps = 1/(new_frame_time-prev_frame_time) 
     prev_frame_time = new_frame_time 
-    cv2.putText(frame,"fps: "+str(int(fps)),(15,15), cv2.FONT_HERSHEY_SIMPLEX, .6,(0,0,255),1,cv2.LINE_AA) # displays fps
+    cv2.putText(frame,"fps: "+str(int(fps)),(15,15), cv2.FONT_HERSHEY_SIMPLEX, .5,(0,0,255),1,cv2.LINE_AA) # displays fps
     
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # apply grayscale
     blur = cv2.GaussianBlur(gray,(5,5),0) # blured (filtered) image with a 5x5 gaussian kernel to remove the noise
@@ -54,8 +54,20 @@ while ret:
             # rvecs, tvecs, _objPoints  =   cv.aruco.estimatePoseSingleMarkers( corners, markerLength, cameraMatrix, distCoeffs[, rvecs[, tvecs[, _objPoints]]] )
             # markerLength  the length of the markers' side. The returning translation vectors will be in the same unit. Normally, unit is meters.
             rvec, tvec, markerPoints = cv2.aruco.estimatePoseSingleMarkers(markerCorner, markerSize, mtx, dist)
-            #(rvec - tvec).any()  # get rid of that nasty numpy value array error
-
+            # The translation vector contains the marker position relative to the camera.
+            translation_mtx = np.matrix(tvec)
+            #print("translation_mtx: ",translation_mtx)
+            translation_mtx_T = np.transpose(translation_mtx)
+            # Convert the rotation vector to the rotation matrix, which contains the roll, pitch, and yaw angle of the marker relative to the camera in marker’s coordinate system.
+            # dst, jacobian	=	cv.Rodrigues(	src[, dst[, jacobian]]	)
+            rotation_mtx = np.matrix(cv2.Rodrigues(rvec)[0]) # Converts a rotation vector to a rotation matrix.
+            #print("rotation_mtx: ",rotation_mtx)
+            rotation_mtx_T = np.transpose(rotation_mtx)
+            # Calculate the camera position with respect to the marker by multiplying the transpose of the rotation matrix and the translation matrix.
+            cam_position = -rotation_mtx_T * translation_mtx_T
+            #print("cam_position: ",cam_position)
+            cv2.putText(frame, "Camera Position(meters): x=%4.2f  y=%4.2f  z=%4.2f"%(cam_position[0], cam_position[1], cam_position[2]),
+                (15, 30),cv2.FONT_HERSHEY_SIMPLEX, .5,(0,0,255),1,cv2.LINE_AA)
             # image =   cv.aruco.drawAxis(  image, cameraMatrix, distCoeffs, rvec, tvec, length )
             cv2.aruco.drawAxis(frame, mtx, dist, rvec, tvec, (0.5)*markerSize)  # Draw the x,y,z axes
 
