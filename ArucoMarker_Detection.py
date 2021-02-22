@@ -33,7 +33,7 @@ while ret:
     new_frame_time = time.time() 
     fps = 1/(new_frame_time-prev_frame_time) 
     prev_frame_time = new_frame_time 
-    cv2.putText(frame,"fps: "+str(int(fps)),(15,15), cv2.FONT_HERSHEY_SIMPLEX, .5,(0,0,255),1,cv2.LINE_AA) # displays fps
+    cv2.putText(frame,"fps: "+str(int(fps)),(15,30), cv2.FONT_HERSHEY_SIMPLEX, .5,(0,0,255),1,cv2.LINE_AA) # displays fps
     
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # apply grayscale
     blur = cv2.GaussianBlur(gray,(5,5),0) # blured (filtered) image with a 5x5 gaussian kernel to remove the noise
@@ -67,8 +67,8 @@ while ret:
             # Calculate the camera position with respect to the marker by multiplying the transpose of the rotation matrix and the translation matrix.
             cam_position = -rotation_mtx_T * translation_mtx_T
             #print("cam_position: ",cam_position)
-            cv2.putText(frame, "Camera Position(meters): x=%4.2f  y=%4.2f  z=%4.2f"%(cam_position[0], cam_position[1], cam_position[2]),
-                (15, 30),cv2.FONT_HERSHEY_SIMPLEX, .5,(0,0,255),1,cv2.LINE_AA)
+            cv2.putText(frame, "Camera position wrt target in real world(meters):: x=%4.2f  y=%4.2f  z=%4.2f"%(cam_position[0], cam_position[1], cam_position[2]),
+                (5, 15),cv2.FONT_HERSHEY_SIMPLEX, .5,(0,0,255),1,cv2.LINE_AA)
             # image =   cv.aruco.drawAxis(  image, cameraMatrix, distCoeffs, rvec, tvec, length )
             cv2.aruco.drawAxis(frame, mtx, dist, rvec, tvec, (0.5)*markerSize)  # Draw the x,y,z axes
 
