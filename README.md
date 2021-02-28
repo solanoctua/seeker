@@ -1,7 +1,6 @@
 # seeker
 Quadcopter image processing for some tasks ,such as precise landing, object tracking, avoiding obstacles, follow me etc.
 using python opencv and dronekit
-
 Platform:
 Flight Controller: Holybro Kakute F7
 ESC: Tekko32 F3 45A 4 In 1 Blheli 32 3-6S Brushless ESC 
