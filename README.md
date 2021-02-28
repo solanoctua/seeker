@@ -1,5 +1,5 @@
 # seeker
-**Quadcopter image processing for some tasks ,such as precise landing, object tracking, avoiding obstacles, follow me etc.
+**Quadcopter image processing for some basic tasks ,such as precise landing, object tracking, avoiding obstacles, follow me etc.
 using python opencv and dronekit**
 
 **Platform:**
