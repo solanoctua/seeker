@@ -13,6 +13,8 @@ using python opencv and dronekit**
 **Companion Computer:** Rasberry Pi 3B+ (will be upgrated to Raspberry Pi 4 Compute Module + StereoPi V2)
 
 ![ArucoMarkerDetection](https://github.com/solanoctua/seeker/blob/main/ArucoMarker_Detection_Result1.png?raw=true)
+![SIFT Feature Detection](https://github.com/solanoctua/seeker/blob/main/SIFT_Result1.png?raw=true)
+
 
 
 
