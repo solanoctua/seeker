@@ -1,6 +1,8 @@
 # seeker
-**Quadcopter image processing for some basic tasks ,such as precise landing, object tracking, avoiding obstacles, follow me etc.
-using python opencv and dronekit**
+**Quadcopter image processing scripts for some basic tasks such as, position hold(Optical Flow+GPS+IMU), precise landing, object tracking, avoiding obstacles, follow me etc. using python opencv and dronekit **
+Further research:
+Graph Based Visual Simultaneous Localization and Mapping (VSLAM)
+
 
 **Platform:**
 
