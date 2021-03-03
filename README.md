@@ -1,5 +1,5 @@
 # seeker
-Quadcopter image processing scripts for some basic tasks such as, position hold(Optical Flow+GPS+IMU), precise landing, object tracking, avoiding obstacles, follow me etc. using python opencv and dronekit 
+**Quadcopter image processing scripts for some basic tasks such as, position hold(Optical Flow+GPS+IMU), precise landing, object tracking, avoiding obstacles, follow me etc. using python opencv and dronekit** 
 
 **Further research:**
 
